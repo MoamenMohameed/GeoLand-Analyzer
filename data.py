@@ -13,38 +13,45 @@ import ee
 import logging
 from folium.plugins import Draw
 
+import base64
+
 st.set_page_config(layout="wide")
 
 # =========================
-# إعداد Earth Engine
-# =========================
-cred_path = os.path.join(os.getcwd(), "ee_credentials.json")
-
-# إذا لم يكن ملف credentials موجود، احفظه من secrets
-if not os.path.exists(cred_path):
-    ee_credentials = st.secrets["earthengine"]["credentials"]
-    with open(cred_path, "w") as f:
-        f.write(ee_credentials)
-
-# محاولة التهيئة
-try:
-    ee.Initialize(project="project000-466321")
-except ee.EEException:
-    ee.Authenticate(
-        authorization_code=None,
-        quiet=True,
-        use_service_account=False,
-        key_file=cred_path
-    )
-    ee.Initialize(project="project000-466321")
-
-st.success("🌍 Earth Engine تم تهيئته بنجاح!")
-
-# =========================
-# إعداد Logging
+# Logging setup
 # =========================
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# =========================
+# Earth Engine Setup
+# =========================
+cred_path = os.path.join(os.getcwd(), "ee_credentials.json")
+b64_path = os.path.join(os.getcwd(), "service_account.b64")
+
+# التأكد من وجود ملف Base64
+if not os.path.exists(b64_path):
+    st.error("❌ ملف service_account.b64 غير موجود في مجلد المشروع!")
+    st.stop()
+
+# قراءة Base64 وفك التشفير
+with open(b64_path, "r") as f:
+    service_account_b64 = f.read()
+
+with open(cred_path, "wb") as f:
+    f.write(base64.b64decode(service_account_b64))
+
+# تهيئة Earth Engine باستخدام Service Account
+try:
+    credentials = ee.ServiceAccountCredentials(
+        "project000-466321@appspot.gserviceaccount.com",  # ضع هنا اسم حساب الخدمة الصحيح
+        key_file=cred_path
+    )
+    ee.Initialize(credentials)
+    st.success("🌍 Earth Engine تم تهيئته بنجاح!")
+except Exception as e:
+    st.error(f"❌ فشل في تهيئة Earth Engine: {e}")
+    st.stop()
 
 # ====================================
 # Function to upload SHP/ZIP
