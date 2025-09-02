@@ -13,18 +13,45 @@ import ee
 import logging
 from folium.plugins import Draw
 
+import base64
+
 st.set_page_config(layout="wide")
 
-# Initialize Earth Engine
-try:
-    ee.Initialize(project="project000-466321")
-except Exception as e:
-    st.error(f"Earth Engine initialization failed: {str(e)}")
-    st.info("Please make sure you've authenticated with Earth Engine")
-
-# Set up logging
+# =========================
+# Logging setup
+# =========================
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# =========================
+# Earth Engine Setup
+# =========================
+cred_path = os.path.join(os.getcwd(), "ee_credentials.json")
+b64_path = os.path.join(os.getcwd(), "service_account.b64")
+
+# التأكد من وجود ملف Base64
+if not os.path.exists(b64_path):
+    st.error("❌ ملف service_account.b64 غير موجود في مجلد المشروع!")
+    st.stop()
+
+# قراءة Base64 وفك التشفير
+with open(b64_path, "r") as f:
+    service_account_b64 = f.read()
+
+with open(cred_path, "wb") as f:
+    f.write(base64.b64decode(service_account_b64))
+
+# تهيئة Earth Engine باستخدام Service Account
+try:
+    credentials = ee.ServiceAccountCredentials(
+        "project000-466321@appspot.gserviceaccount.com",  # ضع هنا اسم حساب الخدمة الصحيح
+        key_file=cred_path
+    )
+    ee.Initialize(credentials)
+    st.success("🌍 Earth Engine تم تهيئته بنجاح!")
+except Exception as e:
+    st.error(f"❌ فشل في تهيئة Earth Engine: {e}")
+    st.stop()
 
 # ====================================
 # Function to upload SHP/ZIP
