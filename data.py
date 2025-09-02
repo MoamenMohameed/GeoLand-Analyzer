@@ -15,7 +15,11 @@ from folium.plugins import Draw
 
 import base64
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="GeoLand Analyzer",  # عنوان الصفحة
+    page_icon="🌍",                  # أيقونة الصفحة (يمكنك تغييرها)
+    layout="wide"                    # التخطيط بعرض كامل
+)
 
 # =========================
 # Logging setup
