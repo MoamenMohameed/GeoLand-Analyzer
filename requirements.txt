@@ -1,29 +1,27 @@
-# Streamlit
-streamlit==1.27.0
+# واجهة المستخدم
+streamlit==1.45.1
+streamlit-folium==0.25.0
 
-# Geospatial
-geopandas==1.14.0
-folium
-contextily
-geoalchemy2
-psycopg2-binary
+# التحليل الجغرافي والخرائط
+geopandas==1.1.1
+shapely==2.1.0
+fiona==1.10.1
+pyproj==3.7.1
+contextily==1.6.2
+folium==0.19.7
+geemap==0.35.3
+matplotlib==3.10.1
+numpy==2.2.3
 
-# Data and plotting
-numpy
-matplotlib
-matplotlib-scalebar
-pandas
-shapely
+# قواعد البيانات
+SQLAlchemy==2.0.43
+GeoAlchemy2==0.18.0
+psycopg2-binary==2.9.10
 
-# Streamlit plugins
-streamlit-folium
+# لغات وكتابة عربية
+arabic-reshaper==3.0.0
+python-bidi==0.6.6
 
-# Google Earth Engine
-earthengine-api==0.1.326
-
-# Arabic text handling
-arabic-reshaper
-python-bidi
-
-# Database ORM
-sqlalchemy
+# أدوات مساعدة
+pandas==2.2.3
+rasterio==1.4.3
