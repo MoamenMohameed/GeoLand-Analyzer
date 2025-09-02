@@ -15,14 +15,34 @@ from folium.plugins import Draw
 
 st.set_page_config(layout="wide")
 
-# Initialize Earth Engine
+# =========================
+# إعداد Earth Engine
+# =========================
+cred_path = os.path.join(os.getcwd(), "ee_credentials.json")
+
+# إذا لم يكن ملف credentials موجود، احفظه من secrets
+if not os.path.exists(cred_path):
+    ee_credentials = st.secrets["earthengine"]["credentials"]
+    with open(cred_path, "w") as f:
+        f.write(ee_credentials)
+
+# محاولة التهيئة
 try:
     ee.Initialize(project="project000-466321")
-except Exception as e:
-    st.error(f"Earth Engine initialization failed: {str(e)}")
-    st.info("Please make sure you've authenticated with Earth Engine")
+except ee.EEException:
+    ee.Authenticate(
+        authorization_code=None,
+        quiet=True,
+        use_service_account=False,
+        key_file=cred_path
+    )
+    ee.Initialize(project="project000-466321")
 
-# Set up logging
+st.success("🌍 Earth Engine تم تهيئته بنجاح!")
+
+# =========================
+# إعداد Logging
+# =========================
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
