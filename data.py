@@ -16,7 +16,7 @@ from folium.plugins import Draw
 import base64
 
 st.set_page_config(
-    page_title="GeoLand Analyzer",  # عنوان الصفحة
+    page_title="Shp-Reader",  # عنوان الصفحة
     page_icon="🌍",                  # أيقونة الصفحة (يمكنك تغييرها)
     layout="wide"                    # التخطيط بعرض كامل
 )
@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 cred_path = os.path.join(os.getcwd(), "ee_credentials.json")
 b64_path = os.path.join(os.getcwd(), "service_account.b64")
 
-# التأكد من وجود ملف Base64
+
 if not os.path.exists(b64_path):
     st.error("❌ ملف service_account.b64 غير موجود في مجلد المشروع!")
     st.stop()
@@ -45,16 +45,16 @@ with open(b64_path, "r") as f:
 with open(cred_path, "wb") as f:
     f.write(base64.b64decode(service_account_b64))
 
-# تهيئة Earth Engine باستخدام Service Account
+
 try:
     credentials = ee.ServiceAccountCredentials(
         "project000-466321@appspot.gserviceaccount.com",  # ضع هنا اسم حساب الخدمة الصحيح
         key_file=cred_path
     )
     ee.Initialize(credentials)
-    st.success("🌍 Earth Engine تم تهيئته بنجاح!")
+    st.success("🌍 Earth Engine connected")
 except Exception as e:
-    st.error(f"❌ فشل في تهيئة Earth Engine: {e}")
+    st.error(f"❌ Earth Engine: {e}")
     st.stop()
 
 # ====================================
